@@ -191,16 +191,6 @@ Executa a aplicação utilizando ts-node-dev.
 
 ---
 
-# Melhorias Futuras
-
-- Geração de relatório detalhado de processamento
-- Logs estruturados
-- Tratamento global de erros
-- Dockerização
-- Testes automatizados
-- Paginação de processamento
-
----
 
 # Autor
 
