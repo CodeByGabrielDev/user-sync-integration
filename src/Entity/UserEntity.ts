@@ -4,7 +4,7 @@ import {
     PrimaryGeneratedColumn
 } from "typeorm";
 
-@Entity("uSERS_PAYTRACK")
+@Entity("Users_entity")
 export class UserEntity {
 
     @PrimaryGeneratedColumn()
