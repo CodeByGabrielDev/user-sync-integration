@@ -2,7 +2,7 @@
           "name": "Udbyhøjvej"
 */
 export interface StreetDto{
-    numberHouse:number;
+    number:number;
 
     name:string;
 }

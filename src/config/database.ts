@@ -3,18 +3,10 @@ import { DataSource } from "typeorm";
 import { UserEntity } from "../Entity/UserEntity";
 
 export const AppDataSource = new DataSource({
-    
-    type: "oracle",
 
-    host: "localhost",
+    type: "better-sqlite3",
 
-    port: 1521,
-
-    username: "ODONTOFLOW",
-
-    password: "senha123",
-
-    serviceName: "XEPDB1",
+    database: "database.db",
 
     synchronize: true,
 

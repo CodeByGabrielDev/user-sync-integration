@@ -8,7 +8,7 @@ export class UserService {
 
   async processUsers() {
     const users = await this.client.fetchUsers();
-    console.log(users.length);
+    const totalFetched = users.length;
     const usersToSaveOrUpdate: RandomUserResponseDto[] = []; // aqui eu decidi criar uma lista vazioa para
     // ir preenchendo as informacoes do usuarios que sao maiores de 18
     for (const currentUser of users) {
@@ -16,27 +16,27 @@ export class UserService {
         usersToSaveOrUpdate.push(currentUser);
       }
     }
-    await this.validationMethod(usersToSaveOrUpdate);
+    await this.validationMethod(usersToSaveOrUpdate, totalFetched);
   }
-  private async validationMethod(user: RandomUserResponseDto[]) {
+  private async validationMethod(users: RandomUserResponseDto[], totalFetched: number) {
     let inserted = 0;
     let updated = 0;
-    for (const users of user) {
+    for (const user of users) {
       const existingUser = await UserRepository.findOne({
         where: {
-          email: users.email,
+          email: user.email,
         },
       });
       if (existingUser) {
-        await this.updateUser(users, existingUser);
+        await this.updateUser(user, existingUser);
         updated++; // aqui realizo a parte de inserção no relatorio em markdown
       } else {
-        await this.insertInDatabase(users);
+        await this.insertInDatabase(user);
         inserted++;// aqui realizo a parte de inserção no relatorio em markdown
       }
     }
 
-    this.generateReport(user.length, inserted, updated);
+    this.generateReport(totalFetched, users.length, inserted, updated);
   }
 
   private async insertInDatabase(user: RandomUserResponseDto) {
@@ -73,22 +73,21 @@ export class UserService {
     await UserRepository.save(userEntity);
   }
 
-  private generateReport(processed: number, inserted: number, updated: number) {
+  private generateReport(totalFetched: number, processed: number, inserted: number, updated: number) {
     //aqui entra a questao de gerar o relatorio em markdown
-    const report = `
-          # Relatório de Processamento
+    const report = `# Relatório de Processamento
 
-          ## Resultado da Integração
+## Resultado da Integração
 
-          - Processados: ${processed}
-          - Inseridos: ${inserted}
-          - Atualizados: ${updated}
+- Buscados da API: ${totalFetched}
+- Processados (maiores de 18): ${processed}
+- Inseridos: ${inserted}
+- Atualizados: ${updated}
 
-          ## Regras aplicadas
+## Regras aplicadas
 
-          - Apenas usuários maiores de 18 anos
-          - Validação por e-mail
-
+- Apenas usuários maiores de 18 anos
+- Validação por e-mail
 `;
     fs.writeFileSync("report.md", report);
   }

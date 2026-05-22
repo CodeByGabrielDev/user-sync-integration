@@ -7,7 +7,7 @@ async function main() {
     try{
     await AppDataSource.initialize();
 
-    console.log("foi");
+    console.log("Banco de dados conectado com sucesso");
 
     const userService = new UserService();
 
