@@ -2,76 +2,94 @@ import { RandomUserClient } from "../client/RandomUserClient";
 import { RandomUserResponseDto } from "../dto/Response/RandomUserResponseDto";
 import { UserEntity } from "../Entity/UserEntity";
 import { UserRepository } from "../repository/UserRepository";
-
+import * as fs from "fs";
 export class UserService {
   private client = new RandomUserClient();
 
   async processUsers() {
     const users = await this.client.fetchUsers();
     console.log(users.length);
-    const usersToSaveOrUpdate = []; // aqui eu decidi criar uma lista vazioa para 
-                                    // ir preenchendo as informacoes do usuarios que sao maiores de 18
-                                    
-    for (const user of users) {
-      if (this.isAdultUser(user.dob.age)) {
-        usersToSaveOrUpdate.push(user);
+    const usersToSaveOrUpdate: RandomUserResponseDto[] = []; // aqui eu decidi criar uma lista vazioa para
+    // ir preenchendo as informacoes do usuarios que sao maiores de 18
+    for (const currentUser of users) {
+      if (this.isAdultUser(currentUser.dob.age)) {
+        usersToSaveOrUpdate.push(currentUser);
       }
     }
-    this.validationMethod(usersToSaveOrUpdate);
+    await this.validationMethod(usersToSaveOrUpdate);
   }
   private async validationMethod(user: RandomUserResponseDto[]) {
+    let inserted = 0;
+    let updated = 0;
     for (const users of user) {
       const existingUser = await UserRepository.findOne({
         where: {
           email: users.email,
         },
       });
+      if (existingUser) {
+        await this.updateUser(users, existingUser);
+        updated++; // aqui realizo a parte de inserção no relatorio em markdown
+      } else {
+        await this.insertInDatabase(users);
+        inserted++;// aqui realizo a parte de inserção no relatorio em markdown
+      }
     }
+
+    this.generateReport(user.length, inserted, updated);
   }
 
   private async insertInDatabase(user: RandomUserResponseDto) {
     const userEntity = new UserEntity();
-    this.auxInsertInDatabase(userEntity, user);
+    this.auxInsertorUpdateInDatabase(userEntity, user);
     await UserRepository.save(userEntity);
   }
-  private auxInsertInDatabase(
+  private auxInsertorUpdateInDatabase(
     userEntity: UserEntity,
     user: RandomUserResponseDto,
   ) {
     userEntity.gender = user.gender;
-    userEntity.title = user.name.title;
     userEntity.firstName = user.name.first;
     userEntity.lastName = user.name.last;
     userEntity.email = user.email;
     userEntity.birthDate = user.dob.date;
     userEntity.age = user.dob.age;
     userEntity.phone = user.phone;
-    userEntity.cell = user.cell;
     userEntity.nationality = user.nat;
     userEntity.city = user.location.city;
-    userEntity.state = user.location.state;
     userEntity.country = user.location.country;
-    userEntity.postcode = user.location.postCode.toString();
-    userEntity.latitude = user.location.coordinates.latitude;
-    userEntity.longitude = user.location.coordinates.longitude;
-    userEntity.timezoneOffset = user.timezone.offset;
-    userEntity.timezoneDescription = user.timezone.description;
-    userEntity.uuid = user.login.uuid;
     userEntity.username = user.login.username;
-    userEntity.registeredDate = user.registered.date;
-    userEntity.registeredAge = user.registered.age;
-    userEntity.documentName = user.id.name;
-    userEntity.documentValue = user.id.value;
-    userEntity.pictureLarge = user.picture.large;
-    userEntity.pictureMedium = user.picture.medium;
-    userEntity.pictureThumbnail = user.picture.thumbnail;
   }
 
   private isAdultUser(age: number): boolean {
-    if (age >= 18) {
-      return true;
-    }
-    return false;
+    return age >= 18;
   }
-  private updateUser(user: RandomUserResponseDto, userEntity: UserEntity) {}
+  private async updateUser(
+    user: RandomUserResponseDto,
+    userEntity: UserEntity,
+  ) {
+    this.auxInsertorUpdateInDatabase(userEntity, user);
+
+    await UserRepository.save(userEntity);
+  }
+
+  private generateReport(processed: number, inserted: number, updated: number) {
+    //aqui entra a questao de gerar o relatorio em markdown
+    const report = `
+          # Relatório de Processamento
+
+          ## Resultado da Integração
+
+          - Processados: ${processed}
+          - Inseridos: ${inserted}
+          - Atualizados: ${updated}
+
+          ## Regras aplicadas
+
+          - Apenas usuários maiores de 18 anos
+          - Validação por e-mail
+
+`;
+    fs.writeFileSync("report.md", report);
+  }
 }
