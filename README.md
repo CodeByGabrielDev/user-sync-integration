@@ -14,7 +14,7 @@ Desenvolver uma aplicação capaz de:
 - Processar os dados recebidos
 - Persistir informações em banco de dados
 - Atualizar registros existentes
-- Gerar uma estrutura organizada e escalável
+- Gerar um relatório de processamento
 
 ---
 
@@ -24,7 +24,7 @@ Desenvolver uma aplicação capaz de:
 - TypeScript
 - Axios
 - TypeORM
-- Oracle Database
+- SQLite
 - ts-node-dev
 
 ---
@@ -53,11 +53,7 @@ src
 │   ├── api.ts
 │   └── database.ts
 │
-├── controller
-│   └── UserController.ts
-│
 ├── dto
-│   ├── Request
 │   └── Response
 │
 ├── entity
@@ -66,12 +62,8 @@ src
 ├── repository
 │   └── UserRepository.ts
 │
-├── reports
-│
 ├── service
 │   └── UserService.ts
-│
-├── utils
 │
 └── app.ts
 ```
@@ -94,6 +86,8 @@ Verificação de usuário existente
 INSERT ou UPDATE
         ↓
 Persistência no banco
+        ↓
+Geração do relatório
 ```
 
 ---
@@ -109,8 +103,6 @@ Validação realizada utilizando o campo:
 ```txt
 dob.age
 ```
-
----
 
 ## Email como chave única
 
@@ -132,7 +124,7 @@ Caso não exista:
 
 # Persistência de Dados
 
-A aplicação utiliza TypeORM para persistência.
+A aplicação utiliza TypeORM para persistência utilizando SQLite.
 
 A entidade `UserEntity` armazena informações como:
 
@@ -143,9 +135,18 @@ A entidade `UserEntity` armazena informações como:
 - Nacionalidade
 - Telefones
 - Localização
-- Coordenadas
 - Dados de login
-- Imagens do usuário
+
+---
+
+# Relatório de Processamento
+
+Ao final da execução, a aplicação gera um arquivo `report.md` contendo:
+
+- Quantidade de registros processados
+- Quantidade de usuários inseridos
+- Quantidade de usuários atualizados
+- Regras aplicadas durante o processamento
 
 ---
 
@@ -171,8 +172,6 @@ A entidade `UserEntity` armazena informações como:
 npm install
 ```
 
----
-
 ## Executar aplicação
 
 ```bash
@@ -190,7 +189,6 @@ npm run dev
 Executa a aplicação utilizando ts-node-dev.
 
 ---
-
 
 # Autor
 
