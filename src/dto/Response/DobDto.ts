@@ -7,5 +7,5 @@
 
 export interface DobDto{
     date:string;
-    age:string;
+    age:number;
 }

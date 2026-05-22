@@ -9,6 +9,7 @@ export class RandomUserClient{
         const response = await api.get<RandomUserApiResponseDto>(
             "/api/?results=150"
         );
+        console.log(response.data)
         return response.data.results;
     }
 }
