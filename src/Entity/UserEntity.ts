@@ -1,95 +1,42 @@
-import {
-    Column,
-    Entity,
-    PrimaryGeneratedColumn
-} from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Users_entity")
 export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @PrimaryGeneratedColumn()
-    id!: number;
+  @Column()
+  gender!: string;
 
-    @Column()
-    gender!: string;
+  @Column()
+  firstName!: string;
 
-    @Column()
-    title!: string;
+  @Column()
+  lastName!: string;
 
-    @Column()
-    firstName!: string;
+  @Column({
+    unique: true,
+  })
+  email!: string;
 
-    @Column()
-    lastName!: string;
+  @Column()
+  birthDate!: string;
 
-    @Column({
-        unique: true
-    })
-    email!: string;
+  @Column()
+  age!: number;
 
-    @Column()
-    birthDate!: string;
+  @Column()
+  phone!: string;
 
-    @Column()
-    age!: number;
+  @Column()
+  nationality!: string;
 
-    @Column()
-    phone!: string;
+  @Column()
+  city!: string;
 
-    @Column()
-    cell!: string;
+  @Column()
+  country!: string;
 
-    @Column()
-    nationality!: string;
-
-    @Column()
-    city!: string;
-
-    @Column()
-    state!: string;
-
-    @Column()
-    country!: string;
-
-    @Column()
-    postcode!: string;
-
-    @Column()
-    latitude!: string;
-
-    @Column()
-    longitude!: string;
-
-    @Column()
-    timezoneOffset!: string;
-
-    @Column()
-    timezoneDescription!: string;
-
-    @Column()
-    uuid!: string;
-
-    @Column()
-    username!: string;
-
-    @Column()
-    registeredDate!: string;
-
-    @Column()
-    registeredAge!: number;
-
-    @Column()
-    documentName!: string;
-
-    @Column()
-    documentValue!: string;
-
-    @Column()
-    pictureLarge!: string;
-
-    @Column()
-    pictureMedium!: string;
-
-    @Column()
-    pictureThumbnail!: string;
+  @Column()
+  username!: string;
 }

@@ -23,6 +23,6 @@ export interface LocationDto{
     city:string;
     state:string;
     country:string;
-    postCode:number;
+    postcode:number;
     coordinates:CoordinatesDto;
 }
